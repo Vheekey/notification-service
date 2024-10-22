@@ -1,13 +1,26 @@
-from fastapi import FastAPI
+import asyncio
+import logging
+from contextlib import asynccontextmanager
+from fastapi import FastAPI, BackgroundTasks
 
-app = FastAPI()
+from app.services.kafka_consumer import consume_messages
+from routes import router as notification_routes
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    logging.basicConfig(level=logging.INFO,
+                        filename='app.log',
+                        filemode='a',
+                        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    print("kafka consumer started")
+    asyncio.create_task(consume_messages(background_tasks=BackgroundTasks()))
+    yield
+    print("Shutting down kafka consumer")
+
+app = FastAPI(lifespan=lifespan)
 
 @app.get("/")
-def read_root():
-    return {"Hello": "World"}
+async def health_check():
+    return {"status": "running"}
 
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: str = None):
-    return {"item_id": item_id, "q": q}
+app.include_router(notification_routes)
