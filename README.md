@@ -21,3 +21,5 @@ uvicorn main:app --reload --port=8002
 Optional:
 1. Change smtp details in config/email_config.py if planning to send emails via SMTP
 2. Comment code on line 39-47 in `services/email_sender.py` 
+
+![sample_email.png](https://github.com/Vheekey/notification-service/blob/main/sample_email.png)
