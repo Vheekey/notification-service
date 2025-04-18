@@ -16,7 +16,7 @@ def send_email(user_data):
 
     try:
         try:
-            data = json.loads(json.loads(user_data))
+            data = json.loads(user_data)
         except json.JSONDecodeError as e:
             logger.error(f"Failed to decode JSON: {e}")
             return
